@@ -1,6 +1,6 @@
 import pygame
 
-PREY_COLOR = (0, 128, 255)
+PREY_COLOR = (255, 255, 255)
 
 
 class PyGameRender(object):
@@ -10,14 +10,15 @@ class PyGameRender(object):
         self.clock = pygame.time.Clock()
 
     def _draw_prey(self, prey):
-        pygame.draw.rect(self.screen, PREY_COLOR, pygame.Rect(prey.pos.x, prey.pos.y, 2, 2))
+        pygame.draw.rect(self.screen, PREY_COLOR, pygame.Rect(prey.pos[0], prey.pos[1], 2, 2))
 
     def _clean(self):
         self.screen.fill((0, 0, 0))
 
     def draw(self, biosphere):
         pygame.event.get()
+        self._clean()
         for prey in biosphere.herd:
             self._draw_prey(prey)
             pygame.display.flip()
-            self.clock.tick(60)
+            self.clock.tick(120)
