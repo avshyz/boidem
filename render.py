@@ -15,9 +15,16 @@ class PyGameRender(object):
     def _clean(self):
         self.screen.fill((0, 0, 0))
 
+    def should_quit(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return True
+        return False
+
     def draw(self, biosphere):
         pygame.event.get()
         self._clean()
+
         for prey in biosphere.herd:
             self._draw_prey(prey)
             pygame.display.flip()

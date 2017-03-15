@@ -1,3 +1,5 @@
+import pygame
+
 from models import Biosphere, Prey, FIELD_HEIGHT, FIELD_WIDTH
 from render import PyGameRender
 
@@ -8,7 +10,8 @@ def main():
     herd = [Prey() for _ in xrange(HERD_SIZE)]
     world = Biosphere(herd)
     renderer = PyGameRender(FIELD_HEIGHT, FIELD_WIDTH)
-    while EPOCH:
+    while EPOCH and not renderer.should_quit():
+
         map(lambda prey: prey.step(world), world.herd)
         renderer.draw(world)
 
