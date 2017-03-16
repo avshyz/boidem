@@ -5,7 +5,7 @@ from collections import namedtuple
 FIELD_HEIGHT = 400
 FIELD_WIDTH = 400
 
-PREY_SPEED = 2
+PREY_SPEED = 10
 
 Biosphere = namedtuple('Biosphere', ['herd'])
 
@@ -32,36 +32,22 @@ class Prey(object):
 
 
     def step(self, biosphere):
-        """
         friends = self._get_closest_neighbors(biosphere.herd)
-        pull = np.average([friend.pos for friend in friends], axis=0) - self.pos
-        close_neighbors = self._get_closest_neighbors(biosphere.herd, threshold=5)
+        overall_force = np.array([0., 0.])
+        for friend in friends:
+            if np.array_equal(friend.pos, self.pos):
+                continue
+            herding_force = friend.pos - self.pos
+            density_force = self.pos - friend.pos
 
-        if close_neighbors:
-            push = self.pos - np.average([x.pos for x in close_neighbors])
-        else:
-            push = self.pos
+            herding_direction = herding_force / np.linalg.norm(herding_force)
+            density_direction = density_force / np.linalg.norm(density_force)
 
-        l = np.linalg.norm(push - pull)
-        direction = (pull * (1 - l)) + (push * l)
+            distance = np.linalg.norm(self.pos - friend.pos)
+            l = 0.4 + (1 / distance)
 
-        direction = PREY_SPEED * (direction / np.linalg.norm(direction))
-        self.pos += direction
-        self._clip_position()"""
-        friends = self._get_closest_neighbors(biosphere.herd)
-        centroid = np.average([friend.pos for friend in friends], axis=0)
-
-        herding_force = centroid - self.pos
-        density_force = self.pos - centroid
-
-        herding_direction = herding_force / np.linalg.norm(herding_force)
-        density_direction = density_force / np.linalg.norm(density_force)
-
-        distance = np.linalg.norm(self.pos - centroid)
-        l = 0.1 + (1 / distance)
-
-        overall_force = (herding_direction * (1 - l) + density_direction * l)
-        self.pos += overall_force * PREY_SPEED
+            overall_force += (herding_direction * (1 - l) + density_direction * l)
+        self.pos += overall_force * PREY_SPEED / len(friends)
         self._clip_position()
 
 
